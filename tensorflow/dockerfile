@@ -1,38 +1,59 @@
 FROM tensorflow/tensorflow
 
-USER root
-
+LABEL maintainer="yoyo"
 LABEL version="0.1.0"
 
-ENV DEBIAN_FRONTEND=noninteractive
+ARG USER_NAME
+ARG USER_ID
+ARG GROUP_ID
 
-# サーバー変更
+ENV pip='python3 -m pip'
+
+# サーバーを日本に変更
+# 多分早くなる
 RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list
 
-# インストール関連
-RUN apt update && apt install -y \
-		neovim \
-		python3-pip
-RUN pip install pandas \
-		matplotlib \
-		tqdm \
-		gensim \
-		sklearn \
-		hydra-core
+RUN apt-get update \
+&&  apt-get install -y --no-install-recommends \
+                sudo \
+                zsh \
+                # vim \
+                neovim \
+                git \
+                make \
+                cmake \
+                curl \
+                wget \
+                xz-utils \
+                # あれば良し
+                # nano \
+                file \
+                ## network
+                net-tools \
+                #japanase
+                language-pack-ja-base \
+                language-pack-ja \
+                locales \
+                # make user
+                gosu
 
-# 作業用ディレクトリの作成
-RUN mkdir Workspace
+# localizing into Japanese
+RUN locale-gen ja_JP.UTF-8 
+ENV LANG ja_JP.UTF-8
+ENV LC_CTYPE ja_JP.UTF-8
+RUN localedef -f UTF-8 -i ja_JP ja_JP.utf8
 
-# aliasの設定
-RUN echo "alias python='python3'" >> /root/.bashrc
-RUN echo "alias vi='nvim'" >> /root/.bashrc
-RUN echo "alias pip='pip3'" >> /root/.bashrc
+# make user
+RUN set -x \
+&&  echo "Starting with UID : ${USER_ID}, GID: ${GROUP_ID}" \
+&&  adduser --disabled-password --gecos "" "${USER_NAME}" \
+&&  echo "${USER_NAME}:${USER_NAME}" | chpasswd \
+&&  echo "%${USER_NAME}    ALL=(ALL)   NOPASSWD:    ALL" >> /etc/sudoers.d/${USER_NAME} \
+&&  chmod 0440 /etc/sudoers.d/${USER_NAME} \
+&&  usermod -u ${USER_ID} ${USER_NAME} \
+&&  groupmod -g ${GROUP_ID} ${USER_NAME} 
 
-# プロンプトの変更
-RUN echo 'export PS1="\e[0;32m> \e[0;35m[docker] \e[0;34m\\w \e[m\]$ "' >> /root/.bashrc
-
-# ホームディレクトリをWorkspaceに変更
-WORKDIR /Workspace
-
-CMD bash
-
+# user change : root -> make user 
+USER ${USER_NAME}
+WORKDIR /home/${USER_NAME}
+CMD [ "zsh" ]

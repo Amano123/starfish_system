@@ -11,4 +11,4 @@ services:
         GROUP_ID: $GROUP_ID
     tty: true
     volumes:
-      - ./share:/Workspace
+      - ./share:/home/${USER_NAME}/workspace
