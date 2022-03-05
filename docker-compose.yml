@@ -12,3 +12,4 @@ services:
     tty: true
     volumes:
       - ./share:/Workspace
+      - ./share:/home/${USER_NAME}/workspace
