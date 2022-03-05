@@ -1,10 +1,14 @@
 version: '3'
 services:
-  python3:
-    restart: always
-    build: .
-    container_name: 'document_classification'
+  tensorflow:
+    container_name: tensorflow
+    build:
+      context: ./tensorflow
+      dockerfile: dockerfile
+      args: 
+        USER_NAME: $USER_NAME
+        USER_ID: $USER_ID
+        GROUP_ID: $GROUP_ID
     tty: true
     volumes:
       - ./share:/Workspace
-
