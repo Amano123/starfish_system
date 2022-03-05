@@ -1,15 +1,14 @@
 version: '3'
 services:
   tensorflow:
-    restart: always
+    container_name: tensorflow
     build:
-      context: ./Tensorflow
+      context: ./tensorflow
       dockerfile: dockerfile
       args: 
         USER_NAME: $USER_NAME
         USER_ID: $USER_ID
         GROUP_ID: $GROUP_ID
-    container_name: 'tensorflow'
     tty: true
     volumes:
       - ./share:/Workspace
