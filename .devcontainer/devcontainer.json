@@ -1,0 +1,12 @@
+{
+	"name": "starfish_system", // コンテナ表示名
+	"dockerComposeFile": [
+		"./docker-compose.yml" // Docker Composeのファイルパス
+	],
+	"service": "tensorflow", // Docker Composeの接続サービス名
+	"remoteUser": "mitune", // デフォルトユーザをrootから切り替える
+	"workspaceFolder": "/home/mitune/workspace", // Workspaceのフォルダを指定
+	"extensions": [ // コンテナ内でインストールするVS Codeの拡張機能ID
+		"ms-python.python"
+	]
+}
